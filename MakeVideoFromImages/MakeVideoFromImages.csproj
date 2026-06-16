@@ -6,6 +6,17 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+    <AssemblyName>MakeVideoFromImages</AssemblyName>
+    <RootNamespace>MakeVideoFromImages</RootNamespace>
+    <Product>Make Video From Images</Product>
+    <Title>Make Video From Images</Title>
+    <Authors>Rodrigo Borges Machado</Authors>
+    <Company>SunSale System</Company>
+    <Description>Windows desktop tool for creating slideshow videos from image folders.</Description>
+    <Copyright>Copyright (c) 2026 SunSale System</Copyright>
+    <PackageProjectUrl>https://www.rodrigomachado.net/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rodrigoborgesmachado</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
