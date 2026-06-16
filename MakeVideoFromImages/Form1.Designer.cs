@@ -27,8 +27,6 @@ namespace MakeVideoFromImages
             heightInput = new NumericUpDown();
             outputPathTextBox = new TextBox();
             browseOutputButton = new Button();
-            ffmpegPathTextBox = new TextBox();
-            browseFFmpegButton = new Button();
             logTextBox = new TextBox();
             optionsPanel = new TableLayoutPanel();
             imageDurationLabel = new Label();
@@ -36,7 +34,6 @@ namespace MakeVideoFromImages
             widthLabel = new Label();
             heightLabel = new Label();
             outputPathLabel = new Label();
-            ffmpegPathLabel = new Label();
             repeatImagesCheckBox = new CheckBox();
             shuffleImagesCheckBox = new CheckBox();
             showTechnicalLogCheckBox = new CheckBox();
@@ -140,24 +137,13 @@ namespace MakeVideoFromImages
             browseOutputButton.Text = "Escolher...";
             browseOutputButton.UseVisualStyleBackColor = true;
 
-            ffmpegPathTextBox.Dock = DockStyle.Fill;
-            ffmpegPathTextBox.Name = "ffmpegPathTextBox";
-            ffmpegPathTextBox.TabIndex = 11;
-            ffmpegPathTextBox.Text = "ffmpeg";
-
-            browseFFmpegButton.Dock = DockStyle.Fill;
-            browseFFmpegButton.Name = "browseFFmpegButton";
-            browseFFmpegButton.TabIndex = 12;
-            browseFFmpegButton.Text = "Escolher...";
-            browseFFmpegButton.UseVisualStyleBackColor = true;
-
             logTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            logTextBox.Location = new Point(12, 484);
+            logTextBox.Location = new Point(12, 455);
             logTextBox.Multiline = true;
             logTextBox.Name = "logTextBox";
             logTextBox.ReadOnly = true;
             logTextBox.ScrollBars = ScrollBars.Vertical;
-            logTextBox.Size = new Size(860, 65);
+            logTextBox.Size = new Size(860, 94);
             logTextBox.TabIndex = 13;
 
             optionsPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -183,24 +169,19 @@ namespace MakeVideoFromImages
             optionsPanel.Controls.Add(outputPathTextBox, 1, 3);
             optionsPanel.SetColumnSpan(outputPathTextBox, 3);
             optionsPanel.Controls.Add(browseOutputButton, 4, 3);
-            optionsPanel.Controls.Add(ffmpegPathLabel, 0, 4);
-            optionsPanel.Controls.Add(ffmpegPathTextBox, 1, 4);
-            optionsPanel.SetColumnSpan(ffmpegPathTextBox, 3);
-            optionsPanel.Controls.Add(browseFFmpegButton, 4, 4);
-            optionsPanel.Controls.Add(showTechnicalLogCheckBox, 0, 5);
+            optionsPanel.Controls.Add(showTechnicalLogCheckBox, 0, 4);
             optionsPanel.SetColumnSpan(showTechnicalLogCheckBox, 2);
-            optionsPanel.Controls.Add(resolutionPresetPanel, 2, 5);
+            optionsPanel.Controls.Add(resolutionPresetPanel, 2, 4);
             optionsPanel.SetColumnSpan(resolutionPresetPanel, 3);
             optionsPanel.Location = new Point(12, 256);
             optionsPanel.Name = "optionsPanel";
-            optionsPanel.RowCount = 6;
+            optionsPanel.RowCount = 5;
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            optionsPanel.Size = new Size(860, 174);
+            optionsPanel.Size = new Size(860, 145);
             optionsPanel.TabIndex = 14;
 
             ConfigureLabel(imageDurationLabel, "Duracao da foto (s)");
@@ -208,7 +189,6 @@ namespace MakeVideoFromImages
             ConfigureLabel(widthLabel, "Largura");
             ConfigureLabel(heightLabel, "Altura");
             ConfigureLabel(outputPathLabel, "Arquivo final");
-            ConfigureLabel(ffmpegPathLabel, "FFmpeg");
 
             repeatImagesCheckBox.AutoSize = true;
             repeatImagesCheckBox.Dock = DockStyle.Fill;
@@ -275,7 +255,7 @@ namespace MakeVideoFromImages
             statusLabel.TextAlign = ContentAlignment.MiddleLeft;
 
             renderProgressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            renderProgressBar.Location = new Point(12, 454);
+            renderProgressBar.Location = new Point(12, 426);
             renderProgressBar.Name = "renderProgressBar";
             renderProgressBar.Size = new Size(860, 23);
             renderProgressBar.TabIndex = 19;
@@ -323,8 +303,6 @@ namespace MakeVideoFromImages
         private NumericUpDown heightInput;
         private TextBox outputPathTextBox;
         private Button browseOutputButton;
-        private TextBox ffmpegPathTextBox;
-        private Button browseFFmpegButton;
         private TextBox logTextBox;
         private TableLayoutPanel optionsPanel;
         private Label imageDurationLabel;
@@ -332,7 +310,6 @@ namespace MakeVideoFromImages
         private Label widthLabel;
         private Label heightLabel;
         private Label outputPathLabel;
-        private Label ffmpegPathLabel;
         private FlowLayoutPanel buttonsPanel;
         private Label statusLabel;
         private CheckBox repeatImagesCheckBox;

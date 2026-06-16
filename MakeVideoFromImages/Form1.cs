@@ -30,7 +30,6 @@ namespace MakeVideoFromImages
             previewSequenceButton.Click += PreviewSequenceButton_Click;
             renderButton.Click += RenderButton_Click;
             browseOutputButton.Click += BrowseOutputButton_Click;
-            browseFFmpegButton.Click += BrowseFFmpegButton_Click;
             monitorResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
             phoneResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
         }
@@ -198,20 +197,6 @@ namespace MakeVideoFromImages
             }
         }
 
-        private void BrowseFFmpegButton_Click(object? sender, EventArgs e)
-        {
-            using var dialog = new OpenFileDialog
-            {
-                Filter = "FFmpeg executable (ffmpeg.exe)|ffmpeg.exe|Executables (*.exe)|*.exe|All files (*.*)|*.*",
-                Title = "Choose ffmpeg.exe"
-            };
-
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                ffmpegPathTextBox.Text = dialog.FileName;
-            }
-        }
-
         private void FolderGrid_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
         {
             if (folderGrid.Columns[e.ColumnIndex].DataPropertyName != nameof(FolderInputModel.ImagesPerCycle))
@@ -251,7 +236,7 @@ namespace MakeVideoFromImages
                 Width = (int)widthInput.Value,
                 Height = (int)heightInput.Value,
                 OutputPath = outputPathTextBox.Text.Trim(),
-                FFmpegPath = string.IsNullOrWhiteSpace(ffmpegPathTextBox.Text) ? "ffmpeg" : ffmpegPathTextBox.Text.Trim()
+                FFmpegPath = FFmpegPathResolver.Resolve()
             };
         }
 
