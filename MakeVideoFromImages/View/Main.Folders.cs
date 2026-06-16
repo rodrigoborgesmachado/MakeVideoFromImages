@@ -14,7 +14,15 @@ public partial class Main
             DataPropertyName = nameof(FolderInputModel.FolderPath),
             HeaderText = "Pasta",
             ReadOnly = true,
-            FillWeight = 82
+            FillWeight = 70
+        });
+
+        folderGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = nameof(FolderInputModel.ImageCount),
+            HeaderText = "Qtd. imagens",
+            ReadOnly = true,
+            FillWeight = 12
         });
 
         folderGrid.Columns.Add(new DataGridViewTextBoxColumn
@@ -26,7 +34,11 @@ public partial class Main
 
         folderGrid.DataSource = _folders;
         folderGrid.CellValidating += FolderGrid_CellValidating;
-        folderGrid.CellEndEdit += (_, _) => folderGrid.Refresh();
+        folderGrid.CellEndEdit += (_, _) =>
+        {
+            folderGrid.Refresh();
+            UpdateVideoEstimate();
+        };
     }
 
     private void AddFolderButton_Click(object? sender, EventArgs e)
@@ -51,10 +63,12 @@ public partial class Main
         _folders.Add(new FolderInputModel
         {
             FolderPath = dialog.SelectedPath,
-            ImagesPerCycle = 1
+            ImagesPerCycle = 1,
+            ImageCount = _imageSequenceService.CountSupportedImages(dialog.SelectedPath)
         });
 
         AppendLog($"Pasta adicionada: {dialog.SelectedPath}");
+        UpdateVideoEstimate();
     }
 
     private void RemoveFolderButton_Click(object? sender, EventArgs e)
@@ -66,6 +80,7 @@ public partial class Main
 
         _folders.Remove(selected);
         AppendLog($"Pasta removida: {selected.FolderPath}");
+        UpdateVideoEstimate();
     }
 
     private void FolderGrid_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
@@ -91,10 +106,11 @@ public partial class Main
 
         return _folders
             .Select(folder => new FolderInputModel
-            {
-                FolderPath = folder.FolderPath,
-                ImagesPerCycle = folder.ImagesPerCycle
-            })
-            .ToList();
+                {
+                    FolderPath = folder.FolderPath,
+                    ImagesPerCycle = folder.ImagesPerCycle,
+                    ImageCount = folder.ImageCount
+                })
+                .ToList();
     }
 }

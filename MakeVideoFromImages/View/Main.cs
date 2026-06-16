@@ -30,6 +30,7 @@ public partial class Main : Form
         renderProgressBar.Minimum = 0;
         renderProgressBar.Maximum = 100;
         renderProgressBar.Value = 0;
+        UpdateVideoEstimate();
     }
 
     private void WireEvents()
@@ -42,6 +43,9 @@ public partial class Main : Form
         aboutButton.Click += AboutButton_Click;
         monitorResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
         phoneResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
+        imageDurationInput.ValueChanged += (_, _) => UpdateVideoEstimate();
+        transitionDurationInput.ValueChanged += (_, _) => UpdateVideoEstimate();
+        repeatImagesCheckBox.CheckedChanged += (_, _) => UpdateVideoEstimate();
     }
 
     private void ResolutionPresetRadioButton_CheckedChanged(object? sender, EventArgs e)
@@ -58,5 +62,30 @@ public partial class Main : Form
             widthInput.Value = 1080;
             heightInput.Value = 1920;
         }
+    }
+
+    private void UpdateVideoEstimate()
+    {
+        if (_folders.Count == 0)
+        {
+            videoEstimateLabel.Text = "Nenhuma pasta adicionada.";
+            return;
+        }
+
+        var imageCount = _imageSequenceService.EstimateSequenceImageCount(_folders, repeatImagesCheckBox.Checked);
+        var durationSeconds = imageCount * (double)imageDurationInput.Value;
+        var duration = TimeSpan.FromSeconds(durationSeconds);
+        var fadeSeconds = (double)transitionDurationInput.Value;
+
+        videoEstimateLabel.Text =
+            $"Estimativa: {imageCount} fotos | video {FormatDuration(duration)} | " +
+            $"foto {(double)imageDurationInput.Value:0.##}s | fade {fadeSeconds:0.##}s";
+    }
+
+    private static string FormatDuration(TimeSpan duration)
+    {
+        return duration.TotalHours >= 1
+            ? duration.ToString(@"h\:mm\:ss")
+            : duration.ToString(@"m\:ss");
     }
 }

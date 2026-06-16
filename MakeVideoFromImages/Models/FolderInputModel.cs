@@ -6,5 +6,7 @@ public sealed class FolderInputModel
 
     public int ImagesPerCycle { get; set; } = 1;
 
+    public int ImageCount { get; set; }
+
     public override string ToString() => $"{FolderPath} ({ImagesPerCycle})";
 }

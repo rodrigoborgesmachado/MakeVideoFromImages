@@ -44,6 +44,7 @@ namespace MakeVideoFromImages
             phoneResolutionRadioButton = new RadioButton();
             buttonsPanel = new FlowLayoutPanel();
             statusLabel = new Label();
+            videoEstimateLabel = new Label();
             renderProgressBar = new ProgressBar();
             ((System.ComponentModel.ISupportInitialize)folderGrid).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imageDurationInput).BeginInit();
@@ -377,10 +378,20 @@ namespace MakeVideoFromImages
             // renderProgressBar
             // 
             renderProgressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            renderProgressBar.Location = new Point(12, 426);
+            renderProgressBar.Location = new Point(12, 430);
             renderProgressBar.Name = "renderProgressBar";
             renderProgressBar.Size = new Size(860, 23);
             renderProgressBar.TabIndex = 19;
+            // 
+            // videoEstimateLabel
+            // 
+            videoEstimateLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            videoEstimateLabel.Location = new Point(12, 405);
+            videoEstimateLabel.Name = "videoEstimateLabel";
+            videoEstimateLabel.Size = new Size(860, 20);
+            videoEstimateLabel.TabIndex = 24;
+            videoEstimateLabel.Text = "Nenhuma pasta adicionada.";
+            videoEstimateLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Main
             // 
@@ -388,6 +399,7 @@ namespace MakeVideoFromImages
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(884, 581);
             Controls.Add(statusLabel);
+            Controls.Add(videoEstimateLabel);
             Controls.Add(renderProgressBar);
             Controls.Add(buttonsPanel);
             Controls.Add(optionsPanel);
@@ -436,6 +448,7 @@ namespace MakeVideoFromImages
         private Label outputPathLabel;
         private FlowLayoutPanel buttonsPanel;
         private Label statusLabel;
+        private Label videoEstimateLabel;
         private CheckBox repeatImagesCheckBox;
         private CheckBox showTechnicalLogCheckBox;
         private ProgressBar renderProgressBar;

@@ -10,8 +10,71 @@ public sealed class ImageSequenceService
         ".jpeg",
         ".png",
         ".webp",
-        ".heic"
+        ".heic",
+        ".heif"
     };
+
+    public int CountSupportedImages(string folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+        {
+            throw new DirectoryNotFoundException($"Folder does not exist: {folderPath}");
+        }
+
+        return Directory.EnumerateFiles(folderPath)
+            .Count(path => SupportedExtensions.Contains(Path.GetExtension(path)));
+    }
+
+    public int EstimateSequenceImageCount(IEnumerable<FolderInputModel> folderInputs, bool repeatImages)
+    {
+        ArgumentNullException.ThrowIfNull(folderInputs);
+
+        var folders = folderInputs
+            .Where(folder => folder.ImageCount > 0)
+            .Select(folder => new
+            {
+                Count = folder.ImageCount,
+                BatchSize = Math.Max(1, folder.ImagesPerCycle),
+                NextIndex = 0
+            })
+            .ToList();
+
+        if (folders.Count == 0)
+        {
+            return 0;
+        }
+
+        if (!repeatImages)
+        {
+            return folders.Sum(folder => folder.Count);
+        }
+
+        var cycleCount = folders.Max(folder => (int)Math.Ceiling((double)folder.Count / folder.BatchSize));
+        var total = 0;
+        for (var cycle = 0; cycle < cycleCount; cycle++)
+        {
+            for (var i = 0; i < folders.Count; i++)
+            {
+                var folder = folders[i];
+                var nextIndex = folder.NextIndex;
+                if (nextIndex >= folder.Count)
+                {
+                    nextIndex = 0;
+                }
+
+                var takeCount = Math.Min(folder.BatchSize, folder.Count - nextIndex);
+                total += takeCount;
+                folders[i] = new
+                {
+                    folder.Count,
+                    folder.BatchSize,
+                    NextIndex = nextIndex + takeCount
+                };
+            }
+        }
+
+        return total;
+    }
 
     public IReadOnlyList<string> BuildSequence(
         IEnumerable<FolderInputModel> folderInputs,
