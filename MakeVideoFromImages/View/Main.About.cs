@@ -8,11 +8,14 @@ public partial class Main
     {
         var message =
             $"{ApplicationOwnership.ProductName}{Environment.NewLine}" +
-            $"{ApplicationOwnership.CompanyName}{Environment.NewLine}" +
+            $"{ApplicationOwnership.CompanyLegalName}{Environment.NewLine}" +
+            $"{ApplicationOwnership.CompanyDescription}{Environment.NewLine}" +
+            $"Site: {ApplicationOwnership.CompanyUrl}{Environment.NewLine}" +
             $"Responsavel: {ApplicationOwnership.OwnerName}{Environment.NewLine}" +
             $"Email: {ApplicationOwnership.ContactEmail}{Environment.NewLine}" +
             $"Portfolio: {ApplicationOwnership.PortfolioUrl}{Environment.NewLine}" +
             $"GitHub: {ApplicationOwnership.GitHubUrl}{Environment.NewLine}" +
+            $"LinkedIn empresa: {ApplicationOwnership.CompanyLinkedInUrl}{Environment.NewLine}" +
             $"LinkedIn: {ApplicationOwnership.LinkedInUrl}";
 
         MessageBox.Show(this, message, "Sobre", MessageBoxButtons.OK, MessageBoxIcon.Information);

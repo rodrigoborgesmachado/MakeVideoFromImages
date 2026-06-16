@@ -11,12 +11,13 @@
     <RootNamespace>MakeVideoFromImages</RootNamespace>
     <Product>Make Video From Images</Product>
     <Title>Make Video From Images</Title>
-    <Authors>Rodrigo Borges Machado</Authors>
-    <Company>SunSale System</Company>
-    <Description>Windows desktop tool for creating slideshow videos from image folders.</Description>
-    <Copyright>Copyright (c) 2026 SunSale System</Copyright>
-    <PackageProjectUrl>https://www.rodrigomachado.net/</PackageProjectUrl>
+    <Authors>SunSale System</Authors>
+    <Company>SunSale System LTDA</Company>
+    <Description>Windows desktop tool for creating slideshow videos from image folders. Developed by SunSale System, a software house focused on custom solutions to optimize routines and connect people.</Description>
+    <Copyright>Copyright (c) 2026 SunSale System LTDA</Copyright>
+    <PackageProjectUrl>https://www.sunsalesystem.com.br/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/rodrigoborgesmachado</RepositoryUrl>
+    <PackageTags>video;images;slideshow;windows;sunsale</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
