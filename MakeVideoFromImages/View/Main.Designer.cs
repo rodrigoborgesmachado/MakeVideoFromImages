@@ -46,7 +46,20 @@ namespace MakeVideoFromImages
             statusLabel = new Label();
             videoEstimateLabel = new Label();
             renderProgressBar = new ProgressBar();
+            musicGrid = new DataGridView();
+            musicButtonsPanel = new FlowLayoutPanel();
+            addMusicButton = new Button();
+            removeMusicButton = new Button();
+            moveMusicUpButton = new Button();
+            moveMusicDownButton = new Button();
+            musicSummaryLabel = new Label();
+            musicStartLabel = new Label();
+            musicRangeTrackBar = new RangeTrackBar();
+            musicEndLabel = new Label();
+            playMusicPreviewButton = new Button();
+            stopMusicPreviewButton = new Button();
             ((System.ComponentModel.ISupportInitialize)folderGrid).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)musicGrid).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imageDurationInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)transitionDurationInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)widthInput).BeginInit();
@@ -54,6 +67,7 @@ namespace MakeVideoFromImages
             optionsPanel.SuspendLayout();
             resolutionPresetPanel.SuspendLayout();
             buttonsPanel.SuspendLayout();
+            musicButtonsPanel.SuspendLayout();
             SuspendLayout();
             // 
             // folderGrid
@@ -67,8 +81,22 @@ namespace MakeVideoFromImages
             folderGrid.Name = "folderGrid";
             folderGrid.RowHeadersWidth = 24;
             folderGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            folderGrid.Size = new Size(860, 196);
+            folderGrid.Size = new Size(1010, 145);
             folderGrid.TabIndex = 0;
+            // 
+            // musicGrid
+            // 
+            musicGrid.AllowUserToAddRows = false;
+            musicGrid.AllowUserToDeleteRows = false;
+            musicGrid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            musicGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            musicGrid.Location = new Point(12, 234);
+            musicGrid.MultiSelect = false;
+            musicGrid.Name = "musicGrid";
+            musicGrid.RowHeadersWidth = 24;
+            musicGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            musicGrid.Size = new Size(1010, 92);
+            musicGrid.TabIndex = 25;
             // 
             // addFolderButton
             // 
@@ -187,12 +215,12 @@ namespace MakeVideoFromImages
             // logTextBox
             // 
             logTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            logTextBox.Location = new Point(12, 455);
+            logTextBox.Location = new Point(12, 655);
             logTextBox.Multiline = true;
             logTextBox.Name = "logTextBox";
             logTextBox.ReadOnly = true;
             logTextBox.ScrollBars = ScrollBars.Vertical;
-            logTextBox.Size = new Size(860, 94);
+            logTextBox.Size = new Size(1010, 94);
             logTextBox.TabIndex = 13;
             // 
             // optionsPanel
@@ -219,7 +247,7 @@ namespace MakeVideoFromImages
             optionsPanel.Controls.Add(browseOutputButton, 4, 3);
             optionsPanel.Controls.Add(showTechnicalLogCheckBox, 0, 4);
             optionsPanel.Controls.Add(resolutionPresetPanel, 2, 4);
-            optionsPanel.Location = new Point(12, 256);
+            optionsPanel.Location = new Point(12, 435);
             optionsPanel.Name = "optionsPanel";
             optionsPanel.RowCount = 5;
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
@@ -227,7 +255,7 @@ namespace MakeVideoFromImages
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
             optionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            optionsPanel.Size = new Size(860, 145);
+            optionsPanel.Size = new Size(1010, 145);
             optionsPanel.TabIndex = 14;
             // 
             // imageDurationLabel
@@ -362,15 +390,122 @@ namespace MakeVideoFromImages
             buttonsPanel.Controls.Add(aboutButton);
             buttonsPanel.Location = new Point(12, 12);
             buttonsPanel.Name = "buttonsPanel";
-            buttonsPanel.Size = new Size(860, 36);
+            buttonsPanel.Size = new Size(1010, 36);
             buttonsPanel.TabIndex = 15;
             // 
+            // musicButtonsPanel
+            // 
+            musicButtonsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            musicButtonsPanel.Controls.Add(addMusicButton);
+            musicButtonsPanel.Controls.Add(removeMusicButton);
+            musicButtonsPanel.Controls.Add(moveMusicUpButton);
+            musicButtonsPanel.Controls.Add(moveMusicDownButton);
+            musicButtonsPanel.Controls.Add(musicSummaryLabel);
+            musicButtonsPanel.Location = new Point(12, 205);
+            musicButtonsPanel.Name = "musicButtonsPanel";
+            musicButtonsPanel.Size = new Size(1010, 27);
+            musicButtonsPanel.TabIndex = 26;
+            // 
+            // addMusicButton
+            // 
+            addMusicButton.AutoSize = true;
+            addMusicButton.Name = "addMusicButton";
+            addMusicButton.Size = new Size(110, 25);
+            addMusicButton.TabIndex = 27;
+            addMusicButton.Text = "Adicionar musica";
+            addMusicButton.UseVisualStyleBackColor = true;
+            // 
+            // removeMusicButton
+            // 
+            removeMusicButton.AutoSize = true;
+            removeMusicButton.Name = "removeMusicButton";
+            removeMusicButton.Size = new Size(105, 25);
+            removeMusicButton.TabIndex = 28;
+            removeMusicButton.Text = "Remover musica";
+            removeMusicButton.UseVisualStyleBackColor = true;
+            // 
+            // moveMusicUpButton
+            // 
+            moveMusicUpButton.AutoSize = true;
+            moveMusicUpButton.Name = "moveMusicUpButton";
+            moveMusicUpButton.Size = new Size(50, 25);
+            moveMusicUpButton.TabIndex = 29;
+            moveMusicUpButton.Text = "Subir";
+            moveMusicUpButton.UseVisualStyleBackColor = true;
+            // 
+            // moveMusicDownButton
+            // 
+            moveMusicDownButton.AutoSize = true;
+            moveMusicDownButton.Name = "moveMusicDownButton";
+            moveMusicDownButton.Size = new Size(55, 25);
+            moveMusicDownButton.TabIndex = 30;
+            moveMusicDownButton.Text = "Descer";
+            moveMusicDownButton.UseVisualStyleBackColor = true;
+            // 
+            // musicSummaryLabel
+            // 
+            musicSummaryLabel.AutoSize = true;
+            musicSummaryLabel.Margin = new Padding(16, 6, 3, 0);
+            musicSummaryLabel.Name = "musicSummaryLabel";
+            musicSummaryLabel.Size = new Size(123, 15);
+            musicSummaryLabel.TabIndex = 31;
+            musicSummaryLabel.Text = "Nenhuma musica.";
+            // 
+            // musicStartLabel
+            // 
+            musicStartLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            musicStartLabel.Location = new Point(12, 331);
+            musicStartLabel.Name = "musicStartLabel";
+            musicStartLabel.Size = new Size(135, 23);
+            musicStartLabel.TabIndex = 32;
+            musicStartLabel.Text = "Barra do trecho";
+            musicStartLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // musicRangeTrackBar
+            // 
+            musicRangeTrackBar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            musicRangeTrackBar.Enabled = false;
+            musicRangeTrackBar.Location = new Point(153, 331);
+            musicRangeTrackBar.Maximum = 0;
+            musicRangeTrackBar.Name = "musicRangeTrackBar";
+            musicRangeTrackBar.Size = new Size(690, 38);
+            musicRangeTrackBar.TabIndex = 33;
+            // 
+            // musicEndLabel
+            // 
+            musicEndLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            musicEndLabel.Location = new Point(12, 377);
+            musicEndLabel.Name = "musicEndLabel";
+            musicEndLabel.Size = new Size(831, 23);
+            musicEndLabel.TabIndex = 34;
+            musicEndLabel.Text = "Trecho selecionado: -";
+            musicEndLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // playMusicPreviewButton
+            // 
+            playMusicPreviewButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            playMusicPreviewButton.Location = new Point(849, 331);
+            playMusicPreviewButton.Name = "playMusicPreviewButton";
+            playMusicPreviewButton.Size = new Size(82, 25);
+            playMusicPreviewButton.TabIndex = 36;
+            playMusicPreviewButton.Text = "Play trecho";
+            playMusicPreviewButton.UseVisualStyleBackColor = true;
+            // 
+            // stopMusicPreviewButton
+            // 
+            stopMusicPreviewButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stopMusicPreviewButton.Location = new Point(937, 331);
+            stopMusicPreviewButton.Name = "stopMusicPreviewButton";
+            stopMusicPreviewButton.Size = new Size(85, 25);
+            stopMusicPreviewButton.TabIndex = 37;
+            stopMusicPreviewButton.Text = "Stop";
+            stopMusicPreviewButton.UseVisualStyleBackColor = true;
             // statusLabel
             // 
             statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            statusLabel.Location = new Point(12, 552);
+            statusLabel.Location = new Point(12, 722);
             statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(860, 23);
+            statusLabel.Size = new Size(1010, 23);
             statusLabel.TabIndex = 16;
             statusLabel.Text = "Ready";
             statusLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -378,17 +513,17 @@ namespace MakeVideoFromImages
             // renderProgressBar
             // 
             renderProgressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            renderProgressBar.Location = new Point(12, 430);
+            renderProgressBar.Location = new Point(12, 626);
             renderProgressBar.Name = "renderProgressBar";
-            renderProgressBar.Size = new Size(860, 23);
+            renderProgressBar.Size = new Size(1010, 23);
             renderProgressBar.TabIndex = 19;
             // 
             // videoEstimateLabel
             // 
             videoEstimateLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            videoEstimateLabel.Location = new Point(12, 405);
+            videoEstimateLabel.Location = new Point(12, 601);
             videoEstimateLabel.Name = "videoEstimateLabel";
-            videoEstimateLabel.Size = new Size(860, 20);
+            videoEstimateLabel.Size = new Size(1010, 20);
             videoEstimateLabel.TabIndex = 24;
             videoEstimateLabel.Text = "Nenhuma pasta adicionada.";
             videoEstimateLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -397,22 +532,30 @@ namespace MakeVideoFromImages
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(884, 581);
+            ClientSize = new Size(1034, 751);
             Controls.Add(statusLabel);
             Controls.Add(videoEstimateLabel);
             Controls.Add(renderProgressBar);
             Controls.Add(buttonsPanel);
             Controls.Add(optionsPanel);
             Controls.Add(logTextBox);
+            Controls.Add(musicRangeTrackBar);
+            Controls.Add(musicStartLabel);
+            Controls.Add(musicEndLabel);
+            Controls.Add(playMusicPreviewButton);
+            Controls.Add(stopMusicPreviewButton);
+            Controls.Add(musicButtonsPanel);
+            Controls.Add(musicGrid);
             Controls.Add(folderGrid);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            MinimumSize = new Size(900, 620);
+            MinimumSize = new Size(1050, 790);
             Name = "Main";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Make Video From Images";
             ((System.ComponentModel.ISupportInitialize)folderGrid).EndInit();
+            ((System.ComponentModel.ISupportInitialize)musicGrid).EndInit();
             ((System.ComponentModel.ISupportInitialize)imageDurationInput).EndInit();
             ((System.ComponentModel.ISupportInitialize)transitionDurationInput).EndInit();
             ((System.ComponentModel.ISupportInitialize)widthInput).EndInit();
@@ -423,6 +566,8 @@ namespace MakeVideoFromImages
             resolutionPresetPanel.PerformLayout();
             buttonsPanel.ResumeLayout(false);
             buttonsPanel.PerformLayout();
+            musicButtonsPanel.ResumeLayout(false);
+            musicButtonsPanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -456,5 +601,17 @@ namespace MakeVideoFromImages
         private FlowLayoutPanel resolutionPresetPanel;
         private RadioButton monitorResolutionRadioButton;
         private RadioButton phoneResolutionRadioButton;
+        private DataGridView musicGrid;
+        private FlowLayoutPanel musicButtonsPanel;
+        private Button addMusicButton;
+        private Button removeMusicButton;
+        private Button moveMusicUpButton;
+        private Button moveMusicDownButton;
+        private Label musicSummaryLabel;
+        private Label musicStartLabel;
+        private RangeTrackBar musicRangeTrackBar;
+        private Label musicEndLabel;
+        private Button playMusicPreviewButton;
+        private Button stopMusicPreviewButton;
     }
 }

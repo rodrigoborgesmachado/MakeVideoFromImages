@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Media;
 using MakeVideoFromImages.Metadata;
 using MakeVideoFromImages.Models;
 using MakeVideoFromImages.Services;
@@ -8,14 +9,26 @@ namespace MakeVideoFromImages;
 public partial class Main : Form
 {
     private readonly BindingList<FolderInputModel> _folders = new();
+    private readonly BindingList<MusicInputModel> _musicTracks = new();
     private readonly ImageSequenceService _imageSequenceService = new();
-    private readonly VideoRenderService _videoRenderService = new(new FFmpegService());
+    private readonly FFmpegService _ffmpegService = new();
+    private readonly VideoRenderService _videoRenderService;
+    private readonly FFprobeService _ffprobeService;
+    private bool _updatingMusicSelection;
+    private SoundPlayer? _musicPreviewPlayer;
+    private string? _musicPreviewPath;
+    private bool _isMusicPreviewPlaying;
+    private int _musicPreviewGeneration;
 
     public Main()
     {
+        _videoRenderService = new VideoRenderService(_ffmpegService);
+        _ffprobeService = new FFprobeService(_ffmpegService);
+
         InitializeComponent();
         WireEvents();
         ConfigureFolderGrid();
+        ConfigureMusicGrid();
         InitializeDefaults();
     }
 
@@ -41,6 +54,15 @@ public partial class Main : Form
         renderButton.Click += RenderButton_Click;
         browseOutputButton.Click += BrowseOutputButton_Click;
         aboutButton.Click += AboutButton_Click;
+        addMusicButton.Click += AddMusicButton_Click;
+        removeMusicButton.Click += RemoveMusicButton_Click;
+        moveMusicUpButton.Click += MoveMusicUpButton_Click;
+        moveMusicDownButton.Click += MoveMusicDownButton_Click;
+        musicGrid.SelectionChanged += MusicGrid_SelectionChanged;
+        musicRangeTrackBar.RangeChanged += MusicRangeTrackBar_RangeChanged;
+        musicRangeTrackBar.RangeChangeCommitted += MusicRangeTrackBar_RangeChangeCommitted;
+        playMusicPreviewButton.Click += PlayMusicPreviewButton_Click;
+        stopMusicPreviewButton.Click += StopMusicPreviewButton_Click;
         monitorResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
         phoneResolutionRadioButton.CheckedChanged += ResolutionPresetRadioButton_CheckedChanged;
         imageDurationInput.ValueChanged += (_, _) => UpdateVideoEstimate();
@@ -76,10 +98,11 @@ public partial class Main : Form
         var durationSeconds = imageCount * (double)imageDurationInput.Value;
         var duration = TimeSpan.FromSeconds(durationSeconds);
         var fadeSeconds = (double)transitionDurationInput.Value;
+        var musicDuration = TimeSpan.FromSeconds(_musicTracks.Sum(track => track.EffectiveDurationSeconds));
 
         videoEstimateLabel.Text =
             $"Estimativa: {imageCount} fotos | video {FormatDuration(duration)} | " +
-            $"foto {(double)imageDurationInput.Value:0.##}s | fade {fadeSeconds:0.##}s";
+            $"musicas {FormatDuration(musicDuration)} | foto {(double)imageDurationInput.Value:0.##}s | fade {fadeSeconds:0.##}s";
     }
 
     private static string FormatDuration(TimeSpan duration)

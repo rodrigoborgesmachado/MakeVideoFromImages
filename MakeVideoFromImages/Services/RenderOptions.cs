@@ -1,3 +1,5 @@
+using MakeVideoFromImages.Models;
+
 namespace MakeVideoFromImages.Services;
 
 public sealed class RenderOptions
@@ -13,4 +15,6 @@ public sealed class RenderOptions
     public string OutputPath { get; set; } = string.Empty;
 
     public string FFmpegPath { get; set; } = "ffmpeg";
+
+    public IReadOnlyList<MusicInputModel> MusicTracks { get; set; } = [];
 }

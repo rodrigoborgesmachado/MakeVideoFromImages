@@ -97,7 +97,8 @@ public partial class Main
             Width = (int)widthInput.Value,
             Height = (int)heightInput.Value,
             OutputPath = outputPathTextBox.Text.Trim(),
-            FFmpegPath = FFmpegPathResolver.Resolve()
+            FFmpegPath = FFmpegPathResolver.Resolve(),
+            MusicTracks = GetMusicInputs()
         };
     }
 
@@ -108,6 +109,14 @@ public partial class Main
         previewSequenceButton.Enabled = !isBusy;
         renderButton.Enabled = !isBusy;
         aboutButton.Enabled = !isBusy;
+        addMusicButton.Enabled = !isBusy;
+        removeMusicButton.Enabled = !isBusy;
+        moveMusicUpButton.Enabled = !isBusy;
+        moveMusicDownButton.Enabled = !isBusy;
+        musicGrid.Enabled = !isBusy;
+        musicRangeTrackBar.Enabled = !isBusy && musicGrid.CurrentRow?.DataBoundItem is not null;
+        playMusicPreviewButton.Enabled = !isBusy && musicGrid.CurrentRow?.DataBoundItem is not null;
+        stopMusicPreviewButton.Enabled = !isBusy;
         folderGrid.Enabled = !isBusy;
         repeatImagesCheckBox.Enabled = !isBusy;
         shuffleImagesCheckBox.Enabled = !isBusy;

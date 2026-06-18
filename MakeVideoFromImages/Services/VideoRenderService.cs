@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using MakeVideoFromImages.Models;
 
 namespace MakeVideoFromImages.Services;
 
@@ -78,13 +79,45 @@ public sealed class VideoRenderService
             {
                 Directory.CreateDirectory(outputDirectory);
             }
-            var concatArguments = $"-y -f concat -safe 0 -i {FFmpegService.Quote(concatFile)} -c copy {FFmpegService.Quote(options.OutputPath)}";
+
+            var videoOnlyPath = HasMusic(options)
+                ? Path.Combine(tempRoot, "video_without_audio.mp4")
+                : options.OutputPath;
+
+            var concatArguments = $"-y -f concat -safe 0 -i {FFmpegService.Quote(concatFile)} -c copy {FFmpegService.Quote(videoOnlyPath)}";
             var concatResult = await _ffmpegService
                 .RunAsync(options.FFmpegPath, concatArguments, CreateTechnicalLogger(progress), cancellationToken)
                 .ConfigureAwait(false);
             if (concatResult.ExitCode != 0)
             {
                 throw new InvalidOperationException($"FFmpeg failed while creating the final video:{Environment.NewLine}{concatResult.Error}");
+            }
+
+            if (HasMusic(options))
+            {
+                var videoDurationSeconds = imageSequence.Count * options.ImageDurationSeconds;
+                var audioPath = await BuildCombinedAudioAsync(
+                    options.MusicTracks,
+                    videoDurationSeconds,
+                    tempRoot,
+                    options,
+                    progress,
+                    cancellationToken).ConfigureAwait(false);
+
+                progress?.Report(new RenderProgress("Adding music to video...", imageSequence.Count, totalSteps));
+                var muxArguments =
+                    $"-y -i {FFmpegService.Quote(videoOnlyPath)} -i {FFmpegService.Quote(audioPath)} " +
+                    "-map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k " +
+                    $"-t {FormatSeconds(videoDurationSeconds)} -movflags +faststart {FFmpegService.Quote(options.OutputPath)}";
+
+                var muxResult = await _ffmpegService
+                    .RunAsync(options.FFmpegPath, muxArguments, CreateTechnicalLogger(progress), cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (muxResult.ExitCode != 0)
+                {
+                    throw new InvalidOperationException($"FFmpeg failed while adding music to the final video:{Environment.NewLine}{muxResult.Error}");
+                }
             }
 
             progress?.Report(new RenderProgress($"Video created: {options.OutputPath}", totalSteps, totalSteps));
@@ -125,6 +158,34 @@ public sealed class VideoRenderService
         if (string.IsNullOrWhiteSpace(options.OutputPath))
         {
             throw new InvalidOperationException("Choose an output video path.");
+        }
+
+        foreach (var music in options.MusicTracks)
+        {
+            if (string.IsNullOrWhiteSpace(music.FilePath) || !File.Exists(music.FilePath))
+            {
+                throw new InvalidOperationException($"Music file does not exist: {music.FilePath}");
+            }
+
+            if (music.StartSeconds < 0)
+            {
+                throw new InvalidOperationException($"Music start cannot be negative: {music.FileName}");
+            }
+
+            if (music.EndSeconds < 0)
+            {
+                throw new InvalidOperationException($"Music end cannot be negative: {music.FileName}");
+            }
+
+            if (music.EndSeconds > 0 && music.EndSeconds <= music.StartSeconds)
+            {
+                throw new InvalidOperationException($"Music end must be greater than start: {music.FileName}");
+            }
+
+            if (music.FadeSeconds < 0)
+            {
+                throw new InvalidOperationException($"Music fade cannot be negative: {music.FileName}");
+            }
         }
     }
 
@@ -191,6 +252,93 @@ public sealed class VideoRenderService
         return progress is null
             ? null
             : message => progress.Report(new RenderProgress(message, IsTechnical: true));
+    }
+
+    private async Task<string> BuildCombinedAudioAsync(
+        IReadOnlyList<MusicInputModel> musicTracks,
+        double videoDurationSeconds,
+        string tempRoot,
+        RenderOptions options,
+        IProgress<RenderProgress>? progress,
+        CancellationToken cancellationToken)
+    {
+        var preparedAudioPaths = new List<string>();
+        var totalAudioSeconds = 0d;
+
+        for (var i = 0; i < musicTracks.Count; i++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (totalAudioSeconds >= videoDurationSeconds)
+            {
+                break;
+            }
+
+            var music = musicTracks[i];
+            var remainingVideoSeconds = videoDurationSeconds - totalAudioSeconds;
+            var effectiveDuration = music.EffectiveDurationSeconds;
+            if (effectiveDuration <= 0)
+            {
+                continue;
+            }
+
+            var clipDuration = Math.Min(effectiveDuration, remainingVideoSeconds);
+            var preparedPath = Path.Combine(tempRoot, $"audio_{i:D3}.wav");
+            progress?.Report(new RenderProgress($"Preparing music {i + 1} of {musicTracks.Count}: {music.FileName}"));
+            var audioFadeFilter = BuildAudioFadeFilter(music.FadeSeconds, clipDuration);
+
+            var arguments =
+                $"-y -ss {FormatSeconds(music.StartSeconds)} -i {FFmpegService.Quote(music.FilePath)} " +
+                $"-t {FormatSeconds(clipDuration)} -vn {audioFadeFilter}" +
+                $"-ac 2 -ar 48000 -sample_fmt s16 {FFmpegService.Quote(preparedPath)}";
+
+            var result = await _ffmpegService
+                .RunAsync(options.FFmpegPath, arguments, CreateTechnicalLogger(progress), cancellationToken)
+                .ConfigureAwait(false);
+
+            if (result.ExitCode != 0)
+            {
+                throw new InvalidOperationException($"FFmpeg failed while preparing music {music.FileName}:{Environment.NewLine}{result.Error}");
+            }
+
+            preparedAudioPaths.Add(preparedPath);
+            totalAudioSeconds += clipDuration;
+        }
+
+        if (preparedAudioPaths.Count == 0)
+        {
+            throw new InvalidOperationException("No valid music segment was available for the video.");
+        }
+
+        var audioConcatFile = Path.Combine(tempRoot, "audio_concat.txt");
+        await File.WriteAllTextAsync(audioConcatFile, BuildConcatFile(preparedAudioPaths), Utf8WithoutBom, cancellationToken).ConfigureAwait(false);
+
+        var combinedAudioPath = Path.Combine(tempRoot, "combined_audio.wav");
+        var concatArguments = $"-y -f concat -safe 0 -i {FFmpegService.Quote(audioConcatFile)} -c copy {FFmpegService.Quote(combinedAudioPath)}";
+        var concatResult = await _ffmpegService
+            .RunAsync(options.FFmpegPath, concatArguments, CreateTechnicalLogger(progress), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (concatResult.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"FFmpeg failed while combining music tracks:{Environment.NewLine}{concatResult.Error}");
+        }
+
+        return combinedAudioPath;
+    }
+
+    private static bool HasMusic(RenderOptions options) => options.MusicTracks.Count > 0;
+
+    private static string BuildAudioFadeFilter(double requestedFadeSeconds, double clipDurationSeconds)
+    {
+        var fadeSeconds = Math.Min(requestedFadeSeconds, clipDurationSeconds / 2);
+        if (fadeSeconds <= 0)
+        {
+            return string.Empty;
+        }
+
+        var fadeOutStart = Math.Max(0, clipDurationSeconds - fadeSeconds);
+        return
+            $"-af {FFmpegService.Quote($"afade=t=in:st=0:d={FormatSeconds(fadeSeconds)},afade=t=out:st={FormatSeconds(fadeOutStart)}:d={FormatSeconds(fadeSeconds)}")} ";
     }
 
     private static bool IsHeicImage(string imagePath)
