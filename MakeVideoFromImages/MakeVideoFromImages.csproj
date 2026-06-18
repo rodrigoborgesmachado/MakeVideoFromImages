@@ -11,10 +11,10 @@
     <RootNamespace>MakeVideoFromImages</RootNamespace>
     <Product>Make Video From Images</Product>
     <Title>Make Video From Images</Title>
-    <Version>1.0.1.0</Version>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1.0</InformationalVersion>
+    <Version>1.0.1.1</Version>
+    <AssemblyVersion>1.0.1.1</AssemblyVersion>
+    <FileVersion>1.0.1.1</FileVersion>
+    <InformationalVersion>1.0.1.1</InformationalVersion>
     <Authors>SunSale System</Authors>
     <Company>SunSale System LTDA</Company>
     <Description>Windows desktop tool for creating slideshow videos from image folders. Developed by SunSale System, a software house focused on custom solutions to optimize routines and connect people.</Description>
