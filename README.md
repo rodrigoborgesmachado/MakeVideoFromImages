@@ -12,6 +12,14 @@ Make Video From Images was created to solve a real-world challenge: generating a
 
 Instead of manually creating slideshows or editing timelines, the application automatically organizes images and generates a complete video presentation.
 
+## Demo
+
+🎬 [View Demo GIF](https://www.sunsalesystem.com.br/img/make_video.gif)
+
+🌐 [Project Website](https://www.rodrigomachado.net/projeto/1059)
+
+📄 [Download Latest Release](https://github.com/rodrigoborgesmachado/MakeVideoFromImages/releases)
+
 ## Features
 
 * Support for multiple image folders
